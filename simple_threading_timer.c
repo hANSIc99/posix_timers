@@ -4,8 +4,11 @@
 #include <signal.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 void expired(union sigval timer_data);
+
+pid_t gettid(void);
 
 struct t_eventData{
     int myData;
@@ -32,6 +35,8 @@ int main()
                                 .it_interval.tv_nsec = 0
                             };
 
+    printf("Simple Threading Timer\n");
+
     /* SIGEV_THREAD
      *
      * Upon timer expiration, invoke sigev_notify_function as if
@@ -47,25 +52,25 @@ int main()
 
 
     if ( res != 0){
-        fprintf(stderr, "Error timer_create, res: %d", res);
+        fprintf(stderr, "Error timer_create: %s\n", strerror(errno));
         exit(-1);
     }
 
 
     res = timer_settime(timerId, 0, &its, NULL);
+
     if ( res != 0){
-        fprintf(stderr, "Error timer_settime, res: %d", res);
+        fprintf(stderr, "Error timer_settime: %s\n", strerror(errno));
         exit(-1);
     }
 
-    printf("Press Any Key to Exit\n");
-    getchar();
+    printf("Press ETNER Key to Exit\n");
+    while(getchar()!='\n'){}
     return 0;
 }
 
 
-
 void expired(union sigval timer_data){
     struct t_eventData *data = timer_data.sival_ptr;
-    printf("Timer fired %d \n", ++data->myData);
+    printf("Timer fired %d - thread-id: %d\n", ++data->myData, gettid());
 }
