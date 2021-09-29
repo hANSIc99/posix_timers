@@ -14,7 +14,6 @@ static void handler(int sig, siginfo_t *si, void *uc);
 
 struct t_eventData{
     int myData;
-
 };
 
 //handle SIGSTOP nopass
@@ -30,8 +29,8 @@ int main()
     struct sigevent sev = { 0 };
     struct t_eventData eventData = { .myData = 0 };
 
-
-    struct sigaction sa;
+    /* specifies the action when receiving a signal */
+    struct sigaction sa = { 0 };
 
     /* specify start delay and interval */
     struct itimerspec its = {   .it_value.tv_sec  = 1,
@@ -46,7 +45,7 @@ int main()
     sev.sigev_signo = SIGRTMIN;
     sev.sigev_value.sival_ptr = &eventData;
 
-
+    /* create timer */
     res = timer_create(CLOCK_REALTIME, &sev, &timerId);
 
     if ( res != 0){
@@ -54,19 +53,22 @@ int main()
         exit(-1);
     }
 
-    printf("Establishing handler for signal %d\n", SIGRTMIN);
+    /* specifz signal and handler */
     sa.sa_flags = SA_SIGINFO;
     sa.sa_sigaction = handler;
 
-
+    /* Initialize signal */
     sigemptyset(&sa.sa_mask);
 
+    printf("Establishing handler for signal %d\n", SIGRTMIN);
+
+    /* Register signal handler */
     if (sigaction(SIGRTMIN, &sa, NULL) == -1){
         fprintf(stderr, "Error sigaction: %s\n", strerror(errno));
         exit(-1);
     }
 
-
+    /* start timer */
     res = timer_settime(timerId, 0, &its, NULL);
 
     if ( res != 0){
@@ -75,9 +77,7 @@ int main()
     }
 
     printf("Press ENTER to Exit\n");
-
     while(getchar()!='\n'){}
-
     return 0;
 }
 
@@ -89,6 +89,5 @@ handler(int sig, siginfo_t *si, void *uc)
     UNUSED(sig);
     UNUSED(uc);
     struct t_eventData *data = (struct t_eventData *) si->_sifields._rt.si_sigval.sival_ptr;
-
     printf("Timer fired %d \n", ++data->myData);
 }

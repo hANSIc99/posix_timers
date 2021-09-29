@@ -25,10 +25,12 @@ int main()
     struct t_eventData eventData = { .myData = 0 };
 
 
-    /* specify behaviour when event received */
+    /*  sigevent specifies behaviour on expiration  */
     struct sigevent sev = { 0 };
 
-    /* specify start delay and interval */
+    /* specify start delay and interval
+     * it_value and it_interval must not be zero */
+
     struct itimerspec its = {   .it_value.tv_sec  = 1,
                                 .it_value.tv_nsec = 0,
                                 .it_interval.tv_sec  = 1,
@@ -48,18 +50,19 @@ int main()
     sev.sigev_value.sival_ptr = &eventData;
 
 
+    /* create timer */
     res = timer_create(CLOCK_REALTIME, &sev, &timerId);
 
 
-    if ( res != 0){
+    if (res != 0){
         fprintf(stderr, "Error timer_create: %s\n", strerror(errno));
         exit(-1);
     }
 
-
+    /* start timer */
     res = timer_settime(timerId, 0, &its, NULL);
 
-    if ( res != 0){
+    if (res != 0){
         fprintf(stderr, "Error timer_settime: %s\n", strerror(errno));
         exit(-1);
     }
