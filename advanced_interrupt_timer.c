@@ -19,10 +19,7 @@ struct t_eventData{
 
 };
 
-//handle SIGSTOP nopass
-//handle SIGSTOP nostop
-// https://stackoverflow.com/questions/63631857/creating-a-new-timer-t-object-after-deleting-a-previous-one-doesnt-work
-// https://stackoverflow.com/questions/5947395/passing-user-data-with-timer-create
+
 int main()
 {
     int res = 0;
@@ -40,8 +37,7 @@ int main()
                                 .it_interval.tv_nsec = 0
                             };
 
-    printf("Advanced Timer\n");
-
+    printf("Advanced Interrupt Timer - thread-id: %d\n", gettid());
     sev.sigev_notify = SIGEV_THREAD_ID; // Linux-specific
     sev.sigev_signo = SIGRTMIN;
     sev.sigev_value.sival_ptr = &eventData;
@@ -88,6 +84,5 @@ handler(int sig, siginfo_t *si, void *uc)
     UNUSED(sig);
     UNUSED(uc);
     struct t_eventData *data = (struct t_eventData *) si->_sifields._rt.si_sigval.sival_ptr;
-
-    printf("Timer fired %d \n", ++data->myData);
+    printf("Timer fired %d - thread-id: %d\n", ++data->myData, gettid());
 }
