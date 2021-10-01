@@ -11,6 +11,7 @@
 #define UNUSED(x) (void)(x)
 
 static void handler(int sig, siginfo_t *si, void *uc);
+pid_t gettid(void);
 
 struct t_eventData{
     int myData;
@@ -39,7 +40,7 @@ int main()
                                 .it_interval.tv_nsec = 0
                             };
 
-    printf("Signal Interrupt Timer\n");
+    printf("Signal Interrupt Timer - thread-id: %d\n", gettid());
 
     sev.sigev_notify = SIGEV_SIGNAL; // Linux-specific
     sev.sigev_signo = SIGRTMIN;
@@ -89,5 +90,5 @@ handler(int sig, siginfo_t *si, void *uc)
     UNUSED(sig);
     UNUSED(uc);
     struct t_eventData *data = (struct t_eventData *) si->_sifields._rt.si_sigval.sival_ptr;
-    printf("Timer fired %d \n", ++data->myData);
+    printf("Timer fired %d - thread-id: %d\n", ++data->myData, gettid());
 }

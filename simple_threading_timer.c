@@ -37,7 +37,7 @@ int main()
                                 .it_interval.tv_nsec = 0
                             };
 
-    printf("Simple Threading Timer\n");
+    printf("Simple Threading Timer - thread-id: %d\n", gettid());
 
     /* SIGEV_THREAD
      *
