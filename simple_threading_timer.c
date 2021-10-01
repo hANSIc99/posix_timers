@@ -14,9 +14,6 @@ struct t_eventData{
     int myData;
 };
 
-// https://stackoverflow.com/questions/5153972/unix-linux-signal-handling-sigev-thread
-
-// https://stackoverflow.com/questions/65675834/sigstop-when-trying-to-debug-application-in-qtcreator-running-on-an-ubuntu-18-04
 int main()
 {
     int res = 0;
@@ -38,12 +35,6 @@ int main()
                             };
 
     printf("Simple Threading Timer - thread-id: %d\n", gettid());
-
-    /* SIGEV_THREAD
-     *
-     * Upon timer expiration, invoke sigev_notify_function as if
-     * it were the start function of a new thread.
-     */
 
     sev.sigev_notify = SIGEV_THREAD;
     sev.sigev_notify_function = &expired;

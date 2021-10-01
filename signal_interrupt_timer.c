@@ -17,10 +17,6 @@ struct t_eventData{
     int myData;
 };
 
-//handle SIGSTOP nopass
-//handle SIGSTOP nostop
-// https://stackoverflow.com/questions/63631857/creating-a-new-timer-t-object-after-deleting-a-previous-one-doesnt-work
-// https://stackoverflow.com/questions/5947395/passing-user-data-with-timer-create
 int main()
 {
     int res = 0;
